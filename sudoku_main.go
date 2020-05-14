@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
-	"io/ioutil"
+	"log"
+	"os"
 )
 
 func main() {
@@ -10,13 +12,24 @@ func main() {
 	var filename string
 	fmt.Println("Enter file name: ")
 	fmt.Scanln(&filename)
-	data, err := ioutil.ReadFile(filename)
+	file, err := os.Open(filename)
 	if err != nil {
-		fmt.Println("File reading error", err)
-		return
+		log.Fatalf("failed opening file: %s", err)
+	}
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	var txtlines []string
+
+	for scanner.Scan() {
+		txtlines = append(txtlines, scanner.Text())
 	}
 	fmt.Println("Reading file", filename)
+	file.Close()
 
-	fmt.Println("Contents of file:")
-	fmt.Println(string(data))
+	var counter int
+	for _, eachline := range txtlines {
+		fmt.Println(eachline)
+		counter++
+	}
+
 }
